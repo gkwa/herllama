@@ -2,9 +2,10 @@ import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { processContent } from '../lib/utils';
 
 test('fetch and process AirTags article', async ({ page }) => {
-  test.setTimeout(30000); // Set timeout to 30s
+  test.setTimeout(30000);
 
   const baseUrl = 'https://appleinsider.com';
   const articlePath = '/inside/airtags';
@@ -12,14 +13,12 @@ test('fetch and process AirTags article', async ({ page }) => {
   
   await page.goto(url, { timeout: 60000, waitUntil: 'domcontentloaded' });
 
-  // Wait for a specific element that indicates the main content has loaded
   await page.waitForSelector('h1', { timeout: 10000 }).catch(() => console.log('H1 not found, but continuing.'));
 
-  // Custom function to check if essential content is present
   const isContentLoaded = await page.evaluate(() => {
     const h1 = document.querySelector('h1');
     const paragraphs = document.querySelectorAll('p');
-    return h1 && paragraphs.length > 5; // Adjust these criteria as needed
+    return h1 && paragraphs.length > 5;
   });
 
   if (!isContentLoaded) {
@@ -27,20 +26,7 @@ test('fetch and process AirTags article', async ({ page }) => {
   }
 
   const content = await page.content();
-
-  const processedContent = await page.evaluate(({ html, baseUrl }) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const links = doc.getElementsByTagName('a');
-    for (let link of links) {
-      link.href = new URL(link.href, baseUrl).href;
-    }
-    const images = doc.getElementsByTagName('img');
-    for (let img of images) {
-      img.src = new URL(img.src, baseUrl).href;
-    }
-    return doc.documentElement.outerHTML;
-  }, { html: content, baseUrl });
+  const processedContent = await processContent(page, content, baseUrl);
 
   const scratchDir = path.join(os.tmpdir(), 'airtags_scratch');
   if (!fs.existsSync(scratchDir)) {
@@ -54,23 +40,13 @@ test('fetch and process AirTags article', async ({ page }) => {
 
   expect(fs.existsSync(filePath)).toBeTruthy();
 
-  // Verify that all links are absolute
   const savedContent = fs.readFileSync(filePath, 'utf-8');
-  const absoluteLinkRegex = /<a[^>]+href="(https?:\/\/[^"]+)"/g;
-  const links = savedContent.match(absoluteLinkRegex) || [];
+  const absoluteUrlRegex = /(href|src|srcset)="(https?:\/\/[^"]+)"/g;
+  const matches = savedContent.match(absoluteUrlRegex) || [];
   
-  expect(links.length).toBeGreaterThan(0);
-  links.forEach(link => {
-    expect(link).toMatch(/href="https?:\/\//);
-  });
-
-  // Verify that all image sources are absolute
-  const absoluteImgRegex = /<img[^>]+src="(https?:\/\/[^"]+)"/g;
-  const images = savedContent.match(absoluteImgRegex) || [];
-  
-  expect(images.length).toBeGreaterThan(0);
-  images.forEach(img => {
-    expect(img).toMatch(/src="https?:\/\//);
+  expect(matches.length).toBeGreaterThan(0);
+  matches.forEach(match => {
+    expect(match).toMatch(/(href|src|srcset)="https?:\/\//);
   });
 });
 
