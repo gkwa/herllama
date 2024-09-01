@@ -8,7 +8,9 @@
     "test:hn:live": "USE_LIVE_REQUESTS=true playwright test tests/hackernews.spec.ts",
     "test:hn:update": "USE_LIVE_REQUESTS=true playwright test tests/hackernews.spec.ts",
     "test:hn:update:headless": "PWHEADLESS=true USE_LIVE_REQUESTS=true playwright test tests/hackernews.spec.ts",
-    "test:hn:headless": "PWHEADLESS=true playwright test tests/hackernews.spec.ts"
+    "test:hn:headless": "PWHEADLESS=true playwright test tests/hackernews.spec.ts",
+    "test:fb": "playwright test tests/facebook_engineering.spec.ts",
+    "test:gleam": "playwright test tests/gleam_lang_article.spec.ts"
   },
   "keywords": [],
   "author": "",
@@ -18,4 +20,3 @@
     "@types/node": "^22.5.1"
   }
 }
-
