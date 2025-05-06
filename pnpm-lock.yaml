@@ -13,7 +13,7 @@ importers:
         version: 1.52.0
       '@types/node':
         specifier: ^22.5.1
-        version: 22.15.8
+        version: 22.15.10
 
 packages:
 
@@ -22,8 +22,8 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@types/node@22.15.8':
-    resolution: {integrity: sha512-VINDWfc4C3DGAa1J+riYRHjzt+IFj5eRaEl768ze7ZqXcjyN/4WHxPLAWMLTwmODpPvFyzuMTAT6A4RMOHlg5g==}
+  '@types/node@22.15.10':
+    resolution: {integrity: sha512-j2U4KRlgZ9Q8tVO/KDAvXu68vutX4kxoRysL6Q22oEU4ZFT2A16aIyqiIWAwFBZkvKep2UOcSGNoLe/6BI0nrg==}
 
   fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
@@ -49,7 +49,7 @@ snapshots:
     dependencies:
       playwright: 1.52.0
 
-  '@types/node@22.15.8':
+  '@types/node@22.15.10':
     dependencies:
       undici-types: 6.21.0
 
